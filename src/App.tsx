@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import ConnectedTextNetwork from "./components/ConnectedTextNetwork";
+import MainDepthScene from "./components/MainDepthScene";
 
 const App = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -11,6 +12,7 @@ const App = () => {
     { label: "Page 2", bg: "bg-green-500" },
     { label: "Page 3", bg: "bg-purple-500" },
     { label: "Page 4", bg: "bg-black" }, // ConnectedTextNetwork 전용 배경
+    { label: "Page 5", bg: "bg-black" }, // MainDepthScene 전용 배경
   ];
 
   // 스크롤 이벤트
@@ -51,6 +53,11 @@ const App = () => {
       {/* Page 4: ConnectedTextNetwork */}
       <div className="h-screen w-screen relative">
         <ConnectedTextNetwork />
+      </div>
+
+      {/* Page 5: MainDepthScene */}
+      <div className="h-screen w-screen relative">
+        <MainDepthScene />
       </div>
     </div>
   );
