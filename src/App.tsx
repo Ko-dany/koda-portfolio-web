@@ -1,35 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useRef, useState } from "react";
+import "./App.css";
+import ConnectedTextNetwork from "./components/ConnectedTextNetwork";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const pages = [
+    { label: "Page 1", bg: "bg-blue-500" },
+    { label: "Page 2", bg: "bg-green-500" },
+    { label: "Page 3", bg: "bg-purple-500" },
+    { label: "Page 4", bg: "bg-black" }, // ConnectedTextNetwork 전용 배경
+  ];
+
+  // 스크롤 이벤트
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (!containerRef.current) return;
+
+      let nextPage = currentPage;
+      if (e.deltaY > 0 && currentPage < pages.length - 1) nextPage++;
+      if (e.deltaY < 0 && currentPage > 0) nextPage--;
+
+      if (nextPage !== currentPage) {
+        setCurrentPage(nextPage);
+        containerRef.current.scrollTo({
+          top: nextPage * window.innerHeight,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [currentPage]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div ref={containerRef} className="h-screen w-screen overflow-hidden">
+      {/* Page 1~3 */}
+      {pages.slice(0, 3).map((page, idx) => (
+        <div
+          key={idx}
+          className={`h-screen w-screen flex items-center justify-center text-white text-4xl ${page.bg}`}
+        >
+          {page.label}
+        </div>
+      ))}
 
-export default App
+      {/* Page 4: ConnectedTextNetwork */}
+      <div className="h-screen w-screen relative">
+        <ConnectedTextNetwork />
+      </div>
+    </div>
+  );
+};
+
+export default App;
